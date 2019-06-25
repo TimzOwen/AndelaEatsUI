@@ -9,9 +9,10 @@
     "build": "npm run prebuild && ./node_modules/.bin/webpack --config ./webpack.dev.js",
     "build:production": "npm run prebuild && ./node_modules/.bin/webpack --config ./webpack.prod.js",
     "start": "node index.js",
+    "start:dev": "npm run build && npm run dev",
     "prestart": "NODE_ENV=production npm run build:production",
     "test": "jest --runInBand --config jest.config.json  --updateSnapshot --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "test-dev": "jest --config=./jest.config.json --updateSnapshot",
+    "test-dev": "jest --config=./jest.config.json --updateSnapshot --coverage",
     "setup:hooks": "sh ../setup_hooks.sh",
     "precommit-msg": "echo 'Running pre-commit checks...' && exit 0",
     "lint": "eslint --fix ./src/**/*.js ./src/**/*.jsx "

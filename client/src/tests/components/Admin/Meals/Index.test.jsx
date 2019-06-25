@@ -21,9 +21,17 @@ const setup = (isLoading, meals = []) => {
     meals,
     showMealModal: jest.fn(),
     fetchMealItems: jest.fn(),
+    searchMealItems: jest.fn(),
     deleteMealItem: jest.fn().mockImplementation(() => Promise.resolve())
   };
   return (shallow(<Meals {...props} />));
+};
+
+const event = {
+  target: {
+    name: 'mealName',
+    value: 'Fish'
+  }
 };
 
 
@@ -89,5 +97,13 @@ describe('Admin:Meals Component', () => {
 
   it('should have a meals props', () => {
     expect(wrapper.instance().props.meals).not.toBeNull();
+  });
+
+  it('should search for meal items', async () => {
+    wrapper = setup(false, mealItems);
+    await wrapper.instance().searchMealItems(event, mealItems);
+    expect(wrapper.instance().state.foundMeals.length).toBeGreaterThan(0);
+    expect(wrapper.instance().state.foundMeals[0].meal_type).toEqual('protein');
+    expect(wrapper.instance().state.foundMeals[0].name).toEqual('Fish');
   });
 });

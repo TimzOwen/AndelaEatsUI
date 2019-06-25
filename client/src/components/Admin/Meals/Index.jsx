@@ -30,7 +30,10 @@ export class Meals extends Component {
       displayDeleteModal: false,
       modalContent: {},
       page: 1,
-      pageSize: 20
+      pageSize: 20,
+      mealName: '',
+      foundMeals: [],
+      isSearching: false
     };
   }
 
@@ -140,6 +143,33 @@ export class Meals extends Component {
     />
   );
 
+
+  /**
+   * @method searchMealItems
+   *
+   * @memberof Meals
+   *
+   * @param {object} event
+   * 
+   * @param {object} meals
+   *
+   * @returns {JSX}
+   */
+  searchMealItems = (event, meals) => {
+    const stateChanged = new Promise(resolve => 
+      resolve(this.setState({
+        [event.target.name]: event.target.value,
+        isSearching: true
+      }))
+    );
+    return stateChanged.then(() => { 
+      const foundMeals =  meals && meals.filter(meal => meal.name.toLowerCase().includes(this.state.mealName.toLowerCase()));
+      this.setState({
+        foundMeals
+      });
+    });
+  };
+
   render() {
     const {
       displayMealModal,
@@ -149,7 +179,7 @@ export class Meals extends Component {
       pagination
     } = this.props;
     const {
-      displayDeleteModal, modalContent, mealDetails, pageSize
+      displayDeleteModal, modalContent, mealDetails, pageSize, mealName, foundMeals, isSearching
     } = this.state;
 
     return (
@@ -164,20 +194,32 @@ export class Meals extends Component {
         <div className={`${isLoading && 'blurred'}`} id="admin-meals">
           <header>
             <div>
-            <br/><span className="title pull-left">Meal Items</span>
-              <button
-                className="pull-right"
-                type="button"
-                onClick={() => this.toggleAddModal(null)}
-              >
-                Add meal item
-              </button>
+              <br/><span className="title pull-left">Meal Items</span>
+            <span className="header-group">
+                <input
+                  type="text"
+                  placeholder="Search meal items ..."
+                  name="mealName"
+                  className="search-bar"
+                  value={mealName}
+                  onChange={(event) => this.searchMealItems(event, meals)}
+                />
+                <button
+                  className="pull-right"
+                  type="button"
+                  onClick={() => this.toggleAddModal(null)}
+                >
+                  Add meal item
+                </button>
+            </span>
             </div>
           </header>
 
           <main>
             <div>
-              { meals.map((meal) => this.renderMeal(meal)) }
+              {foundMeals.length > 0 ? foundMeals.map((meal) => this.renderMeal(meal)) :
+                foundMeals.length < 1 && isSearching === true ? <EmptyContent message="Meal not found" /> :
+                meals.map((meal) => this.renderMeal(meal)) }
               { !isLoading && !meals.length && (
                 <EmptyContent message="No meal has been added yet" />
               )}

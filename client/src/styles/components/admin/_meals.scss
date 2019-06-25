@@ -98,10 +98,27 @@
       width: 100%;
       margin: 0 0 px-to-rem(30px) 0;
 
+      .header-group {
+        display: flex;
+        justify-content: space-evenly;
+      }
+
       .title {
         @include title-text(px-to-rem(6px) 0 0);
         color: $color-blue;
         padding: 0px;
+      }
+
+      .search-bar {
+        color: $color-blue;
+        width: 70%;
+        font-size: px-to-rem(20px);
+        font-family: 'Open Sans', $font-family-pro;
+        padding: 4px 20px;
+        margin: 8px 10px;
+        box-sizing: border-box;
+        border: 2px solid #3359DF;
+        border-radius: 4px;
       }
 
       button {
