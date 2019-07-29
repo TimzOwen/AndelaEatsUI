@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import EditOrder from '../EditOrder/EditOrder';
+import EditAnOrder from '../EditOrder/EditOrder';
 
 const Modal = ({
   displayModal,
@@ -22,7 +22,11 @@ const Modal = ({
           <div className="modal-header">
             <div className="header-title">{modalTitle}</div>
           </div>
-          <h3>{`${modalContent.mealItems[0].name}, ${modalContent.mealItems[1].name} and ${modalContent.mealItems[2].name}?`}</h3>
+          <h3>
+            {`${modalContent.mealItems[0].name},
+             ${modalContent.mealItems[1].name} 
+            and ${modalContent.mealItems[2].name}?`}
+          </h3>
           <span className="warning">This cannot be undone</span>
           <div className="modal-footer">
             <div className="cta">
@@ -59,7 +63,7 @@ const Modal = ({
           </div>
         </div>
       )
-      : modalContent && <EditOrder closeModal={closeModal} meal={modalContent}/>
+      : modalContent && <EditAnOrder closeModal={closeModal} meal={modalContent}/>
     }
   </div>
 )

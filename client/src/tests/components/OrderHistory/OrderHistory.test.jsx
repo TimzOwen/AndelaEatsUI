@@ -30,7 +30,7 @@ const menuList = [
       {
         id: 67,
         isDeleted: false,
-        mealType: "side",
+        meal_yype: "side",
         name: "Afang soup",
         description: "Afang soup",
         image: "https://res.cloudinary.com/dunnio1id/image/upload/v1541564567/hqsytk8lcgs9jkz3u0rg.jpg",
@@ -45,7 +45,7 @@ const menuList = [
       {
         id: 157,
         isDeleted: false,
-        mealType: "protein",
+        meal_type: "protein",
         name: "Cat fish",
         description: "Protein",
         image: "/assets/images/default.png",
@@ -65,7 +65,7 @@ const menuList = [
     mainMeal: {
       id: 153,
       isDeleted: false,
-      mealType: "main",
+      meal_type: "main",
       name: "Amala",
       description: "Swallow",
       image: "/assets/images/default.png",
@@ -335,7 +335,6 @@ describe('Test suite for rating an order', () => {
         ratingList: [{
           overallRating: 4, mainMeal: 'Caribbean pasta', date: '2019-08-05'
         }]
-        
       },
       userReducer: {}
     });
@@ -366,19 +365,19 @@ describe('Test suite for rating an order', () => {
           mealItems: [
             {
               id: 67,
-              mealType: "side",
+              meal_type: "side",
               name: "Afang soup",
               image: "https://res.cloudinary.com/dunnio1id/image/upload/v1541564567/hqsytk8lcgs9jkz3u0rg.jpg"
             },
             {
               id: 157,
-              mealType: "protein",
+              meal_type: "protein",
               name: "Cat fish",
               image: "/assets/images/default.png"
             },
             {
               id: 153,
-              mealType: "main",
+              meal_type: "main",
               name: "Amala",
               image: "/assets/images/default.png"
             }

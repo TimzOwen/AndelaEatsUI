@@ -1,9 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import DatePicker from "react-datepicker";
 import Select from 'react-select';
 
 const Input = ({
-  id, value, onChangeHandler, options, name, label, type, error, clearErrors, isRequired
+  id, value, onChangeHandler, options, name,
+  label, type, error, clearErrors, isRequired
 }) => (
   <div className="form-field-set">
     <label htmlFor={id}>
@@ -16,27 +18,30 @@ const Input = ({
             options={options}
           />
         )
-        : (type === 'date-picker'
-          ? (
-            <DatePicker
-              selected={value}
-              onChange={onChangeHandler}
-              name={name}
-            />
-          )
-          : (
-            <input
-              id={id}
-              className="input"
-              name={name}
-              onChange={onChangeHandler}
-              onFocus={clearErrors}
-              value={value}
-              type={type}
-            />
-          )
+        : null
+      }
+      { type === 'date-picker'
+        ? (
+          <DatePicker
+            selected={value}
+            onChange={onChangeHandler}
+            name={name}
+          />
         )
-        }
+        : ((type !== 'date-picker') && (type !== 'select')
+            && (
+              <input
+                id={id}
+                className="input"
+                name={name}
+                onChange={onChangeHandler}
+                onFocus={clearErrors}
+                value={value}
+                type={type}
+              />
+            )
+        )
+      }
       <span className="input-validation">{isRequired ? '* Required' : ''}</span>
       <span className="form-error">
         {error || ''}
@@ -44,5 +49,17 @@ const Input = ({
     </label>
   </div>
 );
+Input.propTypes = {
+  id: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  options: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  error: PropTypes.string.isRequired,
+  onChangeHandler: PropTypes.func.isRequired,
+  clearErrors: PropTypes.func.isRequired,
+  isRequired: PropTypes.string.isRequired,
+};
 
 export default Input;

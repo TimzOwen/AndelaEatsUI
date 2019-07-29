@@ -18,12 +18,14 @@ const NotCollectedAction = ({
           ? (
             <React.Fragment>
               <a
+                role="button"
                 className="button test rate-button"
                 tabIndex="0"
-                onClick={() => showModal(meal, '', edit=true)}
+                onClick={() => showModal(meal, '', true)}
               > Edit
               </a>
               <a
+                role="button"
                 className="button test"
                 tabIndex="0"
                 onClick={() => showModal(meal, 'Delete Order')}

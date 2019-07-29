@@ -97,13 +97,11 @@ export const fetchOrders = (
 };
 
 export const filterOrders = order => dispatch => {
-  const {
-    searchParam, startDate, endDate, page = 1 
-  } = order;
+  const { startDate, endDate, page = 1 } = order;
 
   dispatch(setOrdersLoading(true));
   return axios
-    .get(`/orders/user/${userID}/${startDate}/${endDate}`) //eslint-disable-line
+    .get(`/orders/user/${userID}/${startDate}/${endDate}`) // eslint-disable-line
     .then(response => {
       dispatch(setFilteredOrders(response.data.payload, page));
       dispatch(setOrdersLoading(false));
@@ -118,7 +116,7 @@ export const deleteOrder = id => dispatch => {
   dispatch(deleteOrdersLoading(true));
   return axios
     .delete(`/orders/${id}`)
-    .then(response => {
+    .then(() => {
       toast.success('Order deleted successfully');
       dispatch(deleteOrdersSuccess(id));
       dispatch(deleteOrdersLoading(false));
@@ -193,22 +191,20 @@ export const createRatingFailure = error => ({
 export const createRating = ratingDetails => dispatch => {
   dispatch(createRatingLoading());
   const url = `/ratings/order/`;
-
   const options = {
     method: 'POST',
     data: ratingDetails,
     url
   };
-
   return axios(options)
     .then((response) => {
       const { payload: { rating } } = response.data;
       dispatch(createRatingSuccess(rating));
-      toastSuccess('Rating Saved');
+      toastSuccess('Meal rated successfully');
     })
     .catch(error => {
       dispatch(createRatingFailure(error));
-      toastError(error.response.data.msg);
+      toastError('The meal could not be rated');
     });
 };
 
@@ -230,13 +226,11 @@ export const collectOrderFailure = error => ({
 export const collectOrder = orderDetails => dispatch => {
   dispatch(collectOrderLoading(true));
   const url = `/orders/collect`;
-
   const options = {
     method: 'POST',
     data: orderDetails,
     url
   };
-
   return axios(options)
     .then(response => {
       const {
@@ -246,10 +240,14 @@ export const collectOrder = orderDetails => dispatch => {
       toastSuccess('Order collected successfully');
       dispatch(collectOrderSuccess(order));
       dispatch(collectOrderLoading(false));
+      return true;
     })
     .catch(error => {
-      toastError(error.message);
-      dispatch(collectOrderFailure(error.message));
+      toastError((error.response.data && error.response.data.msg)
+        || error.message);
+      dispatch(collectOrderFailure((error.response.data
+        && error.response.data.msg) || error.message));
       dispatch(collectOrderLoading(false));
+      return false;
     });
 };

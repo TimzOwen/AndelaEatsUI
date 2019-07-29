@@ -167,11 +167,11 @@ describe('Past Orders Reducer', () => {
         payload: {
           typeId: 201,
           rating: 2
-
         }
       };
-      const newState = ordersReducer({ ...orders, orders: [{ id: 201 }] }, action);
-
+      const newState = ordersReducer({
+        ...orders, orders: [{ id: 201 }]
+      }, action);
       expect(newState.orders[0].user_rating).toEqual(action.payload.rating);
     });
   });

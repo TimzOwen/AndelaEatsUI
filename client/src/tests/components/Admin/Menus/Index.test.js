@@ -150,7 +150,7 @@ describe('Admin: Menu Component', () => {
     it('mapStateToProps', () => {
       const initialState = {
         menus: menu,
-        allEngagements: { upComingEngagements: { engagements: engagement } }
+        allEngagements: { engagements: engagement }
       };
 
       expect(mapStateToProps(initialState).menus).toEqual(menu);

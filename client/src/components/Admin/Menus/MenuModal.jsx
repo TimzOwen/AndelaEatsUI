@@ -9,7 +9,9 @@ import moment from 'moment';
 import Loader from '../../common/Loader/Loader';
 import inputValidation from '../../../helpers/inputValidation';
 import formatDropdown from '../../../helpers/formatDropdown';
-import formatMealItems, { getIds, formatDate } from '../../../helpers/formatMealItems';
+import formatMealItems, {
+  getIds, formatDate
+} from '../../../helpers/formatMealItems';
 import { adminAllowed } from '../../../tests/__mocks__/mockMenuItems';
 
 /**
@@ -167,7 +169,7 @@ class MenuModal extends Component {
    *
    * @memberOf MenuModal
    *
-   * @returns Void
+   * @returns {Void}
    */
   handleCloseModal = () => {
     this.setState(MenuModal.initialState());

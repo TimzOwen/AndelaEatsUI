@@ -37,7 +37,7 @@
         flex-direction: row;
         justify-content: flex-start;
 
-        .title, .date-range, {
+        .title, .date-range {
           @include title-text(
             px-to-rem(6px) 0 0
           );
@@ -165,6 +165,7 @@
       font-size: 1rem;
       height: 5rem;
       width: 100%;
+      resize: none;
 
       &:focus {
         outline: none;

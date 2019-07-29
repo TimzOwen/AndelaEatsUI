@@ -48,13 +48,10 @@ describe('MealCard Component', () => {
   });
 
   it('should render CollectedAction', () => {
-    getComponent().setState({ meal: { id: 1 } });
-    getComponent().setProps({
-      ...props,
-      meal: { ...props.meal, orderStatus: 'collected' }
-    });
-    expect(getComponent().find('CollectedAction').length).toBe(1);
-    expect(getComponent().find('NotCollectedAction').length).toBe(0);
+    props.meal.orderStatus = "Collected";
+    const component = shallow(<MealCard {...props} />);
+    expect(component.find('CollectedAction').length).toBe(1);
+    expect(component.find('NotCollectedAction').length).toBe(0);
   });
 
   it('should render NotCollectedAction', () => {
