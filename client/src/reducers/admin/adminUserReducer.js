@@ -14,7 +14,9 @@ import {
   DELETE_USER_PERMISION_SUCCESS,
   FETCH_USER_PERMISION_SUCCESS,
   IS_FETCHING_ROLES,
-  FETCH_ALL_PERMISIONS
+  FETCH_ALL_PERMISIONS,
+  DELETE_ADMIN_SUCCESS,
+  DELETE_ADMIN_LOADING
 } from "../../actions/actionTypes";
 import { initialUser } from '../initialState';
 import filter from '../../helpers/filter';
@@ -31,7 +33,7 @@ const adminUserReducer = (state = initialUser, action) => {
     case ADD_ADMIN_USER_SUCCESS:
       return {
         ...state,
-        message: action.message
+        adminUsers: [action.payload, ...state.adminUsers],
       };
     case ADD_ADMIN_USER_FAILURE:
       return {
@@ -79,7 +81,7 @@ const adminUserReducer = (state = initialUser, action) => {
       return {
         ...state,
         roles: filter(state.roles, action.payload)
-      }
+      };
     case DELETE_USER_PERMISION_SUCCESS:
       return {
         ...state,
@@ -99,6 +101,12 @@ const adminUserReducer = (state = initialUser, action) => {
       return {
         ...state,
         isloading: action.payload
+      };
+    case DELETE_ADMIN_LOADING:
+      return { ...state, isDeleting: action.payload };
+    case DELETE_ADMIN_SUCCESS:
+      return {
+        ...state,
       };
     default:
       return state;

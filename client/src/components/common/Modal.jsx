@@ -15,7 +15,7 @@ const Modal = ({
 }) => (
   <div
     className="modal"
-    id="add-vendor-modal"
+    id="add-modal"
     style={displayModal ? { display: 'block' } : { display: 'none' }}
   >
     <div className="modal-content">

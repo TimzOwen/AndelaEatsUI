@@ -153,12 +153,13 @@ export class Orders extends Component {
       createOrder //eslint-disable-line
     } = this.props;
 
+    const { selectedMenu, menuListId } = this.state;
+
     const menuList = menus.reduce((accu, curr) => {
       return [...accu, ...curr.menus]
     }, []);
+    menuList.reverse();
 
-    const { selectedMenu, menuListId } = this.state;
-    
     return (
       <div>
         {isLoading ? (

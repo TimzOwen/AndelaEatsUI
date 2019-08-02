@@ -1,7 +1,8 @@
 import React from 'react';
 
-export default () => (
+const Loader = () => (
   <div className="loader-container">
     <div className="wheel" />
   </div>
 );
+export default Loader;

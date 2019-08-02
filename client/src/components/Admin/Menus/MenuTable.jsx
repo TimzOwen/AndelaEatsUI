@@ -232,7 +232,9 @@ export class MenuTable extends Component {
       serviceDate,
       channel: 'web'
     };
-    this.props.rateVendor(vendorDetails);
+    this.props.rateVendor(vendorDetails).then(() => {
+      this.toggleRatingModal();
+    });
   }
 
   /**

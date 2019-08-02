@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
 import SideNav from './common/Sidenav/Sidenav';
 import Login from './Login/Login';
 import Orders from './Order/Orders';

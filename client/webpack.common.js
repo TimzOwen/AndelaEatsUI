@@ -9,6 +9,7 @@ module.exports = {
   context: __dirname,
   devtool: 'inline-source-map',
   entry: [
+    'babel-polyfill',
     path.resolve(__dirname, './src/index')
   ],
   target: 'web',

@@ -21,9 +21,9 @@ export const fetchMealRatingsFailure = () => ({
   type: FETCH_MEAL_RATING_FAILURE,
 });
 
-export const fetchMealRatings = (date) => (dispatch) => {
+export const fetchMealRatings = (date, userId = null) => (dispatch) => {
   dispatch(fetchMealRatingsLoading());
-  return axios.get(`/ratings/${date}`)
+  return axios.get(`/ratings/${date}/?userId=${userId}`)
     .then(response => {
       const { payload: result } = response.data;
       dispatch(fetchMealRatingsSuccess(result));

@@ -20,7 +20,7 @@
     margin: auto;
     border-radius: 4px;
     max-width: px-to-rem(420px);
-    top: 14%;
+    top: 5%;
 
     .modal-header {
       display: flex;
@@ -54,7 +54,7 @@
       display: flex;
       flex-flow: row wrap;
       justify-content: flex-end;
-      margin-top: 35px;
+      margin-top: 28px;
       .button-container {
         display: flex;
         justify-content: space-evenly;
@@ -62,7 +62,7 @@
       }
 
       button {
-        
+
         @include buttons(
           $color-blue,
           $color-white,
@@ -99,12 +99,12 @@
       button:disabled {
         cursor: not-allowed
       }
-      
+
     }
   }
   .form-field-set {
     display: block;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 
     label {
       @include field-label();
@@ -114,7 +114,7 @@
 
     input {
       @include field-input();
-      margin-top: 2px;
+      margin-top: 1.5px;
     }
     select {
       all: unset;
@@ -130,6 +130,9 @@
     font-size: 12px;
     color: $color-red;
     margin-left: 8px;
+  }
+  .errors{
+    float:right;
   }
 }
 

@@ -14,7 +14,25 @@ export const adminUsers = {
         ]
       }
     ]
+  },
+};
+
+export const newAdminUser = { 
+  // data: {
+  msg: "OK",
+  payload: {
+    user_role: {
+      email: "admin.user@andela.com",
+      id: 76,
+      isActive: true,
+      isDeleted: false,
+      locationId: 1,
+      roleId: 1,
+      timestamps: { created_at: "2019-06-17", updated_at: "Mon, 17 Jun 2019 11:00:55 GMT" } 
+    },
+    userId: "-LTY8T0N1_9gwLINyKuY" 
   }
+  // },
 };
 
 export const roles = {
@@ -125,6 +143,6 @@ export const tappedUsers = {
       { date: "2019-06-11", count: 0 }
     ]
   }
-}
+};
 
 export const roleId = 1;

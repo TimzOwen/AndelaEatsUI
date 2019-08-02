@@ -46,6 +46,9 @@
       &.collected {
         background-color: $color-green;
       }
+      &.cancelled {
+        background: $color-dark-gray;
+      }
     }
   }
 

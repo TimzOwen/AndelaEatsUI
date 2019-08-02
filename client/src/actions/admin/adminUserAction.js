@@ -36,7 +36,10 @@ import {
   DELETE_USER_SUCCESS,
   FETCH_USER_ROLES_FAILURE,
   FETCH_USER_ROLES_SUCCESS,
-  FETCH_USER_ROLES_LOADING
+  FETCH_USER_ROLES_LOADING,
+  DELETE_ADMIN_FAILURE,
+  DELETE_ADMIN_SUCCESS,
+  DELETE_ADMIN_LOADING
 } from "../actionTypes";
 
 export const userID = token().id;
@@ -90,9 +93,9 @@ const isFetchingRoles = (payload) => ({
   payload
 });
 
-export const addAdminUser = (message, type) => ({
+export const addAdminUser = (type, payload) => ({
   type,
-  message
+  payload
 });
 
 export const deleteUserLoading = () => ({
@@ -217,17 +220,20 @@ export const getAllPermisions = (adminId) => dispatch => {
     });
 };
 
-export const createAdminUser = (userData) => dispatch => axios.post(`/roles/user`, userData)
-  .then((response) => {
-    const { msg } = response.data;
-    toastSuccess("User role changed to Admin successfully");
-    dispatch(addAdminUser(msg, ADD_ADMIN_USER_SUCCESS));
-  })
-  .catch((error) => {
-    error = error.response.data.msg;
-    toastError(error);
-    dispatch(addAdminUser(error, ADD_ADMIN_USER_FAILURE));
-  });
+export const createAdminUser = (userData) => dispatch => {
+  return axios.post(`/roles/user`, userData)
+    .then((response) => {
+      const payload = response.data.payload.user_role;
+      toastSuccess("User role changed to Admin successfully");
+      dispatch(addAdminUser(ADD_ADMIN_USER_SUCCESS, payload));
+      dispatch(getAllAdminUsers());
+    })
+    .catch((error) => {
+      error = error.response.data.msg;
+      toastError(error);
+      dispatch(addAdminUser(ADD_ADMIN_USER_FAILURE, error));
+    });
+};
 
 export const addUserRole = (type, role) => ({
   type,
@@ -353,4 +359,30 @@ export const fetchUserRoles = () => dispatch => {
     .then((response) => {
       dispatch(fetchUserRolesSuccess(response.data.payload.roles));
     }).catch(err => dispatch(fetchUserRolesFailure(err.response.data.msg)));
+};
+
+export const revokeAdminSuccess = (payload) => ({
+  type: DELETE_ADMIN_SUCCESS,
+  payload
+});
+
+export const revokeAdminLoading = (isDeleting) => ({
+  type: DELETE_ADMIN_LOADING,
+  isDeleting
+});
+
+export const revokeAdminFailure = (error) => ({
+  type: DELETE_ADMIN_FAILURE,
+  error
+});
+
+export const revokeAdmin = (userRoleId) => dispatch => {
+  dispatch(revokeAdminLoading(true));
+  return axios.delete(`/roles/user/delete/${userRoleId}`)
+    .then((response) => {
+      toastSuccess(response.data.msg);
+      dispatch(revokeAdminSuccess(response.data.payload));
+      dispatch(revokeAdminLoading(false));
+      dispatch(getAllAdminUsers());
+    }).catch(err => dispatch(revokeAdminFailure(err.response.data.msg)));
 };

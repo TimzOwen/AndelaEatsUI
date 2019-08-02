@@ -2,7 +2,7 @@ import Ratings from 'react-stars';
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-const CollectedAction = ({ rating, meal, showRatingModal }) => (
+const CollectedAction = ({ meal, showRatingModal }) => (
   <div className="card-action collected">
     <div className="item">
       <p className="sub-head">Status</p>
@@ -12,13 +12,14 @@ const CollectedAction = ({ rating, meal, showRatingModal }) => (
       <div className="item">
         <p className="sub-head">Rating</p>
         <Ratings
-          value={rating}
+          value={meal.user_rating}
           color2="green"
           edit={false}
           name="rating"
         />
       </div>
-      { meal && !meal.hasRated && (<div>
+      { meal && !meal.hasRated && (
+      <div>
         <p className="sub-head">Rate this meal</p>
         <a
           className="button rate-button"
@@ -35,13 +36,8 @@ const CollectedAction = ({ rating, meal, showRatingModal }) => (
 );
 
 CollectedAction.propTypes = {
-  rating: PropTypes.number,
   meal: PropTypes.object,
   showRatingModal: PropTypes.func
-};
-
-CollectedAction.defaultProps = {
-  rating: 0
 };
 
 export default CollectedAction;

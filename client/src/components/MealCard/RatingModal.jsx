@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactStars from 'react-stars';
-import PropTypes from 'prop-types';
+import { 
+  func, bool, string, object, number
+} from 'prop-types';
 import { format } from 'date-fns';
 
 const RatingModal = ({
@@ -77,9 +79,12 @@ const RatingModal = ({
 );
 
 RatingModal.propTypes = {
-  displayModal: PropTypes.bool,
-  hideModal: PropTypes.func,
-  modalContent: PropTypes.object
+  displayModal: bool,
+  hideModal: func,
+  modalContent: object,
+  handleSubmit: func,
+  onChange: func,
+  newRating: number
 };
 
 

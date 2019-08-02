@@ -1,19 +1,21 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../common/Modal';
-import Loader from '../../common/Loader/Loader';
 import Input from '../../common/FormInputs';
 import SelectBox from '../../common/SelectBox/SelectBox';
+import ImageView from '../../common/ImageView/ImageView';
 
 const userModal = (
   { 
     showModal, hideModal, loading, user, onChange, handleSubmit, errors, 
-    roles
+    roles, openFileDialog, image, handleUpload, getImageRef, imageLoading 
   }) => {
   const options = roles
     .map(option => ({ value: option, name: option.name.toUpperCase(), id: option.id }));
   const role = roles
     .find(item => item.id === (user.roleId ? Number(user.roleId) : user.userRoles[0].id));
+
+  const imageInput = getImageRef();
   return (
     <Fragment>
       <Modal 
@@ -21,11 +23,30 @@ const userModal = (
         closeModal={hideModal} 
         formValidation={handleSubmit} 
         content={user}
-        loading={loading}
+        loading={loading || imageLoading}
         modalButtonText={!user.id ? 'ADD USER' : 'UPDATE USER'}
         modalTitle={!user.id ? 'Add User' : 'Edit User'}
       >
-        <Fragment>
+        <main>
+          <div className="user-image">
+            <input
+              type="file"
+              style={{ display: 'none' }}
+              ref={imageInput}
+              onChange={handleUpload}
+            />
+            <div>
+              Upload meal thumbnail. &nbsp;
+              <a role="button" onClick={openFileDialog}>
+               Select from computer
+              </a>
+            </div>
+          </div>
+          <ImageView 
+            error={image.error}
+            dataurl={image.dataurl || user.imageUrl}
+            openFileDialog={openFileDialog}
+          />
           <Input
             id="firstName"
             name="firstName"
@@ -54,7 +75,7 @@ const userModal = (
               type="roleId"
             />
           </div>
-        </Fragment>
+        </main>
       </Modal>
     </Fragment>
   );
@@ -68,6 +89,12 @@ userModal.propTypes = {
   onChange: PropTypes.func.isRequired,
   errors: PropTypes.object,
   hideModal: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired
+  handleSubmit: PropTypes.func.isRequired,
+  roles: PropTypes.array.isRequired,
+  openFileDialog: PropTypes.func.isRequired,
+  handleUpload: PropTypes.func.isRequired,
+  getImageRef: PropTypes.func.isRequired,
+  imageLoading: PropTypes.bool,
+  image: PropTypes.object,
 };
 export default userModal;

@@ -9,7 +9,9 @@ import {
   EDIT_ORDER_SUCCESS,
   UPDATE_ORDER_SUCCESS,
   GET_ORDER_SUCCESS,
-  CREATE_MENU_RATING_SUCCESS
+  CREATE_MENU_RATING_SUCCESS,
+  CREATE_MENU_RATING_LOADING,
+  CREATE_MENU_RATING_FAILURE
 } from '../actions/actionTypes';
 
 import filter from '../helpers/filter';
@@ -68,7 +70,18 @@ export default (state = orders, action) => {
             };
           }
           return order;
-        })
+        }),
+        isLoading: false
+      };
+    case CREATE_MENU_RATING_LOADING:
+      return {
+        ...state,
+        isLoading: true
+      };
+    case CREATE_MENU_RATING_FAILURE:
+      return {
+        ...state,
+        isLoading: false
       };
     default:
       return state;

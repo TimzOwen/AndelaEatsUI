@@ -76,8 +76,9 @@
       display: flex;
       align-items: center;
       img {
-        width: 50px;
-        padding-right: 0.5rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
       }
       .user-role {
         color: #fff;

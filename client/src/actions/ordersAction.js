@@ -176,9 +176,8 @@ export const getOrderByDate = date => dispatch => {
     });
 };
 
-export const createRatingLoading = isLoading => ({
+export const createRatingLoading = () => ({
   type: CREATE_MENU_RATING_LOADING,
-  payload: isLoading
 });
 
 export const createRatingSuccess = ratings => ({
@@ -192,7 +191,7 @@ export const createRatingFailure = error => ({
 });
 
 export const createRating = ratingDetails => dispatch => {
-  dispatch(createRatingLoading(true));
+  dispatch(createRatingLoading());
   const url = `/ratings/order/`;
 
   const options = {
@@ -205,11 +204,11 @@ export const createRating = ratingDetails => dispatch => {
     .then((response) => {
       const { payload: { rating } } = response.data;
       dispatch(createRatingSuccess(rating));
-      dispatch(createRatingLoading(false));
+      toastSuccess('Rating Saved');
     })
     .catch(error => {
       dispatch(createRatingFailure(error));
-      dispatch(createRatingLoading(false));
+      toastError(error.response.data.msg);
     });
 };
 

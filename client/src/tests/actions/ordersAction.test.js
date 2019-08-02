@@ -393,20 +393,17 @@ describe('Order actions', () => {
       status: 200,
       response: {
         payload: {
-          ratings: []
+          rating: 5,
+          msg: 'Rating Created'
         }
       }
     });
     const expectedActions = [
       {
         type: CREATE_MENU_RATING_LOADING,
-        payload: true
-      },
-      {
-        type: CREATE_MENU_RATING_SUCCESS,
       }, {
-        type: CREATE_MENU_RATING_LOADING,
-        payload: false
+        type: CREATE_MENU_RATING_SUCCESS,
+        payload: 5
       }];
     const ratingDetails = {
       channel: "web",
@@ -425,7 +422,7 @@ describe('Order actions', () => {
     done();
   });
 
-   it('should fail to rate incase of an error', async (done) => {
+  it('should fail to rate incase of an error', async (done) => {
     moxios.stubRequest(`/ratings/order/`, {
       status: 400,
       response: {
@@ -451,19 +448,18 @@ describe('Order actions', () => {
     done();
   });
 
-   it('should call the createRatingLoading action', () => {
-    const payload = { payload: 'failed to fetch' };
-    const expectedAction = { type: CREATE_MENU_RATING_LOADING, payload };
-    expect(createRatingLoading(payload)).toEqual({ ...expectedAction });
+  it('should call the createRatingLoading action', () => {
+    const expectedAction = { type: CREATE_MENU_RATING_LOADING };
+    expect(createRatingLoading()).toEqual({ ...expectedAction });
   });
 
-   it('should create a rating successfully', () => {
+  it('should create a rating successfully', () => {
     const payload = { payload: '5 stars' };
     const expectedAction = { type: CREATE_MENU_RATING_SUCCESS, payload };
     expect(createRatingSuccess(payload)).toEqual({ ...expectedAction });
   });
 
-   it('should fail to create a rating incase of an error', () => {
+  it('should fail to create a rating incase of an error', () => {
     const payload = { payload: 'An error' };
     const expectedAction = { type: CREATE_MENU_RATING_FAILURE, payload };
     expect(createRatingFailure(payload)).toEqual({ ...expectedAction });

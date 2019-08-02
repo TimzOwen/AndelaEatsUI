@@ -12,6 +12,7 @@ import {
   EDIT_MEAL_ITEM_LOADING,
   EDIT_MEAL_ITEM_SUCCESS,
   EDIT_MEAL_ITEM_FAILURE,
+  MEAL_EXISTS_RESULT,
 } from '../../actions/actionTypes';
 import filter from '../../helpers/filter';
 import { findUpdatedIndex } from '../../helpers/mealsHelper';
@@ -25,14 +26,14 @@ const mealItemsReducer = (state = initialMealItems, action) => {
       return {
         ...state,
         meals: action.payload.mealItems,
-        pagination: action.payload.pagination
+        pagination: action.payload.pagination,
       };
     case DELETE_MEAL_ITEM_LOADING:
       return { ...state, isDeleting: action.payload };
     case DELETE_MEAL_ITEM_SUCCESS:
       return {
         ...state,
-        meals: filter(state.meals, action.payload)
+        meals: filter(state.meals, action.payload),
       };
     case FETCH_MEAL_ITEMS_FAILURE:
       return state;
@@ -43,8 +44,8 @@ const mealItemsReducer = (state = initialMealItems, action) => {
         ...state,
         mealModal: {
           ...state.mealModal,
-          errors: action.payload
-        }
+          errors: action.payload,
+        },
       };
     case SHOW_MEAL_MODAL:
       return {
@@ -52,8 +53,8 @@ const mealItemsReducer = (state = initialMealItems, action) => {
         mealModal: {
           ...state.mealModal,
           show: action.payload.show,
-          edit: action.payload.edit
-        }
+          edit: action.payload.edit,
+        },
       };
     case SET_ADD_MEAL_LOADING:
       return {
@@ -61,13 +62,13 @@ const mealItemsReducer = (state = initialMealItems, action) => {
         mealModal: {
           ...state.mealModal,
           isLoading: action.payload,
-          addBtnDisabled: action.payload
-        }
+          addBtnDisabled: action.payload,
+        },
       };
     case ADD_MEAL_ITEM_SUCCESS:
       return {
         ...state,
-        meals: [...state.meals, action.payload]
+        meals: [...state.meals, action.payload],
       };
     case EDIT_MEAL_ITEM_LOADING:
       return {
@@ -75,19 +76,29 @@ const mealItemsReducer = (state = initialMealItems, action) => {
         mealModal: {
           ...state.mealModal,
           isLoading: action.payload,
-          addBtnDisabled: action.payload
-        }
+          addBtnDisabled: action.payload,
+        },
       };
     case EDIT_MEAL_ITEM_SUCCESS:
       return {
         ...state,
         meals: [
-          ...state.meals
-            .slice(0, findUpdatedIndex(state.meals, action.payload.mealItemId)),
+          ...state.meals.slice(
+            0,
+            findUpdatedIndex(state.meals, action.payload.mealItemId)
+          ),
           { ...action.payload.mealItem, id: action.payload.mealItemId },
-          ...state.meals
-            .slice(findUpdatedIndex(state.meals, action.payload.mealItemId) + 1)
-        ]
+          ...state.meals.slice(
+            findUpdatedIndex(state.meals, action.payload.mealItemId) + 1
+          ),
+        ],
+      };
+    case MEAL_EXISTS_RESULT:
+      return {
+        ...state,
+        loadingMealExistence: action.payload.loadingMealExistence,
+        mealExists: action.payload.mealExists,
+        filteredMeals: action.payload.filteredMeals,
       };
     case EDIT_MEAL_ITEM_FAILURE:
       return state;

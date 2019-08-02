@@ -1,13 +1,10 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { Component } from 'react';
 import {
-  func, array, bool, string
+  func, bool, string
 } from 'prop-types';
-import Select from 'react-select';
 import ReactStars from 'react-stars';
-import { formatDateToISOString } from '../../helpers/dateFormatter';
-
-
+import Loader from './Loader/Loader';
 /**
  *
  *
@@ -102,6 +99,7 @@ class RatingModal extends Component {
 
   /**
  *
+ * 
  * @method handleForm
  *
  * @param {object} event
@@ -117,7 +115,7 @@ class RatingModal extends Component {
     if (!comment) return this.handleError('comment');
     const data = { rating, comment };
     this.props.handleSubmit(data);
-    this.handleCloseModal();
+    this.setState(RatingModal.initialState());
   }
 
   /**
@@ -235,12 +233,14 @@ class RatingModal extends Component {
   )
 
   render() {
-    const display = this.props.displayModal ? 'block' : 'none';
+    const { isLoading, displayModal } = this.props;
+    const display = displayModal ? 'block' : 'none';
     return (
       <div className="modal ratings-modal" style={{ display }}>
         <div className="modal-content">
           {this.renderModalHeader()}
           <div className="modal-body">
+            {isLoading && <Loader />}
             <form onSubmit={this.handleForm} id="rating-form">
               {this.renderStars()}
               {this.renderTextArea()}
@@ -257,7 +257,8 @@ RatingModal.propTypes = {
   closeModal: func,
   handleSubmit: func,
   displayModal: bool,
-  modalTitle: string
+  modalTitle: string,
+  isLoading: bool,
 };
 
 export default RatingModal;

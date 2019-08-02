@@ -10,13 +10,12 @@ import { fetchMealRatings } from '../../../actions/admin/mealRatingActions';
 import { mealRatings, pagination } from '../../__mocks__/mockMealItems';
 
 describe('MealRatings actions', () => {
-
   describe('Fetch meal ratings', () => {
     beforeEach(() => moxios.install());
     afterEach(() => moxios.uninstall());
 
     it('fetch meal ratings success', async (done) => {
-      moxios.stubRequest(`/ratings/2018-21-1`, {
+      moxios.stubRequest(`/ratings/2018-21-1/?userId=Lhjskksk`, {
         status: 200,
         response: {
           payload: mealRatings.payload
@@ -37,7 +36,7 @@ describe('MealRatings actions', () => {
       const store = mockStore({});
 
       await store
-        .dispatch(fetchMealRatings('2018-21-1'))
+        .dispatch(fetchMealRatings('2018-21-1', 'Lhjskksk'))
         .then(() => {
           expect(store.getActions()).toEqual(expectedActions);
         });
@@ -45,7 +44,7 @@ describe('MealRatings actions', () => {
     });
 
     it('fetch meal ratings failure', async (done) => {
-      moxios.stubRequest(`/ratings/2018`, {
+      moxios.stubRequest(`/ratings/2018-21-1/?userId=Lhjskksk`, {
         status: 401,
       });
 
@@ -62,7 +61,7 @@ describe('MealRatings actions', () => {
       const store = mockStore({});
 
       await store
-        .dispatch(fetchMealRatings("2018"))
+        .dispatch(fetchMealRatings('2018-21-1', 'Lhjskksk'))
         .then(() => {
           expect(store.getActions()).toEqual(expectedActions);
         });

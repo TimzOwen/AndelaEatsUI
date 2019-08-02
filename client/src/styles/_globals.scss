@@ -187,3 +187,39 @@ body {
     }
   }
 }
+
+.image {
+  display: block;
+  margin: 5px auto 20px;
+  height: 201px;
+  font-weight: 300;
+  background: #f7f7f7;
+  border: 1px solid #ebebeb;
+  border-radius: 4px;
+
+  .control {
+    margin-top: 13%;
+    text-align: center;
+
+    button {
+      @include circled-btn(
+        50px,
+        $color-light-blue,
+        white,
+        px-to-rem(22px)
+      );
+    }
+
+    span {
+      display: block;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 300;
+      color: $color-light-blue;
+
+      &.error {
+        color: $color-red;
+      }
+    }
+  }
+}

@@ -14,6 +14,7 @@ import {
   EDIT_MEAL_ITEM_FAILURE,
   EDIT_MEAL_ITEM_SUCCESS,
   EDIT_MEAL_ITEM_LOADING,
+  MEAL_EXISTS_RESULT,
 } from '../actionTypes';
 import { mealImageUpload } from '../../helpers/mealsHelper';
 
@@ -25,6 +26,15 @@ export const fectchMealItemsLoading = (isLoading) => ({
 export const fetchMealItemsFailure = (error) => ({
   type: FETCH_MEAL_ITEMS_FAILURE,
   payload: error,
+});
+
+export const mealItemExistence = (response) => ({
+  type: MEAL_EXISTS_RESULT,
+  payload: {
+    loadingMealExistence: false,
+    mealExists: Boolean(response.data.payload.mealItems.length),
+    filteredMeals: response.data.payload.mealItems
+  },
 });
 
 export const fetchMealItemsSuccess = (mealItems, pagination) => ({
@@ -157,9 +167,9 @@ export const editMealItem = (mealItemId, formData) => (dispatch) => {
       throw error;
     } else {
       const { file, dataurl, ...rest } = formData;
-      const reqData = { ...rest, image: url };
+      const reqdata = { ...rest, image: url };
       return axios
-        .patch(`/meal-items/${mealItemId}`, reqData)
+        .patch(`/meal-items/${mealItemId}`, reqdata)
         .then((response) => {
           const { mealItem } = response.data.payload;
           toastSuccess('Meal item updated successfully');
@@ -174,4 +184,30 @@ export const editMealItem = (mealItemId, formData) => (dispatch) => {
         });
     }
   });
+};
+
+export const checkMealExistence = (mealItemName) => (dispatch) => {
+  const capitalizedMealName = mealItemName.charAt(0).toUpperCase() + mealItemName.slice(1);
+  let payload;
+  if (mealItemName.trim().length === 0) { 
+    payload = { loadingMealExistence: false, mealExists: null, mealItems: [] };
+  }
+  payload = { loadingMealExistence: true, mealExists: null, mealItems: [] };
+
+  dispatch({
+    type: MEAL_EXISTS_RESULT,
+    payload,
+  });
+
+  return axios
+    .get(`/meal-items?name=${capitalizedMealName}`)
+    .then((response) => {
+      dispatch(mealItemExistence(response));
+    })
+    .catch((error) => {
+      dispatch({
+        type: MEAL_EXISTS_RESULT,
+        payload: { loadingMealExistence: false, mealExists: null, mealItems: [] },
+      });
+    });
 };

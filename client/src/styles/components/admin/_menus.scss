@@ -116,7 +116,7 @@
 }
 
 .ratings-modal {
-
+  z-index: 3;
   small {
     color: $color-red;
     vertical-align: top;
@@ -137,6 +137,7 @@
     padding: 3rem 2.5rem;
     position: relative;
     width: 21rem;
+    z-index: 5;
 
     .modal-header {
       margin-bottom: .4rem;

@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { Component, Fragment } from 'react';
-import { 
+import {
   func, shape, string, array, bool, date, object
 } from 'prop-types';
 import Select from 'react-select';
@@ -13,7 +13,7 @@ import formatMealItems, { getIds, formatDate } from '../../../helpers/formatMeal
 import { adminAllowed } from '../../../tests/__mocks__/mockMenuItems';
 
 /**
- * 
+ *
  * @class MenuModal
  * @extends Component
  */
@@ -68,10 +68,10 @@ class MenuModal extends Component {
    * @method onChange
    *
    * @memberOf MenuModal
-   * 
+   *
    * @param {object} selectOption
    * @param {object} name
-   * 
+   *
    * @returns {void}
    */
   onChange = (selectOption, name) => {
@@ -86,11 +86,11 @@ class MenuModal extends Component {
   };
 
   /**
-   * 
+   *
    * @method checkAllowedSelection
-   * 
+   *
    * @memberOf MenuModal
-   * 
+   *
    * @returns {void}
    */
   checkAllowedSelection = () => {
@@ -102,14 +102,34 @@ class MenuModal extends Component {
       allowedProtein,
       mainItem,
       collectionDate,
-      vendorEngagementId 
+      vendorEngagementId
     } = this.state;
+
+    if (sideMeal.length < allowedSideMeal.value) {
+      this.setState({
+        errors: {
+          sideMeal: 'Side meals should not be less than Allowed Side Meal'
+        }
+      });
+
+      return;
+    }
+
+    if (protein.length < allowedProtein.value) {
+      this.setState({
+        errors: {
+          protein: 'Proteins not be less than Allowed Protein'
+        }
+      });
+
+      return;
+    }
 
     if (Object.keys(check).length !== 0) {
       this.setState({ errors: check });
     } else {
       this.props.handleSubmit({
-        date: formatDate(collectionDate), 
+        date: formatDate(collectionDate),
         mealPeriod: "Lunch",
         mainMealId: mainItem.value,
         allowedSide: allowedSideMeal.value,
@@ -122,13 +142,13 @@ class MenuModal extends Component {
   }
 
   /**
-   * 
+   *
    * @method formValidation
-   * 
+   *
    * @memberOf MenuModal
-   * 
+   *
    * @param {object} event
-   * 
+   *
    * @returns {void}
    */
   formValidation = (event) => {
@@ -142,11 +162,11 @@ class MenuModal extends Component {
   };
 
   /**
-   * 
+   *
    * @method handleCloseModal
-   * 
+   *
    * @memberOf MenuModal
-   * 
+   *
    * @returns Void
    */
   handleCloseModal = () => {
@@ -178,9 +198,9 @@ class MenuModal extends Component {
     const formatedMealItems = formatMealItems(mealItems);
     return (
       <Fragment>
-        <div 
+        <div
           className="modal"
-          id="menu-modal" 
+          id="menu-modal"
           style={displayModal ? { display: 'block' } : { display: 'none' }}
         >
           <div className="modal-content">
@@ -224,7 +244,7 @@ class MenuModal extends Component {
                     </label>
                     <Select
                       onChange={(e) => this.onChange(e, 'mainItem')}
-                      name="mainItem" 
+                      name="mainItem"
                       id="mainItem"
                       value={mainItem}
                       options={formatedMealItems.main}
@@ -269,7 +289,7 @@ class MenuModal extends Component {
                     </label>
                     <Select
                       onChange={(e) => this.onChange(e, "allowedProtein")}
-                      name="allowedProtein" 
+                      name="allowedProtein"
                       value={allowedProtein}
                       options={adminAllowed}
                       isClearable
@@ -279,11 +299,11 @@ class MenuModal extends Component {
                 </div>
                 <div className="form-field-single">
                   <label htmlFor="soup">Side meal&nbsp;
-                    <span>
+                    <span className="errors">
                       {errors.sideMeal ? errors.sideMeal : ""}
                     </span>
                   </label>
-                  <Select 
+                  <Select
                     onChange={(e) => this.onChange(e, 'sideMeal')}
                     isMulti
                     value={sideMeal}
@@ -293,7 +313,7 @@ class MenuModal extends Component {
                 </div>
                 <div className="form-field-single">
                   <label htmlFor="Protien">Protein&nbsp;
-                    <span>
+                    <span className="errors">
                       {errors.protein ? errors.protein : ""}
                     </span>
                   </label>
@@ -313,7 +333,7 @@ class MenuModal extends Component {
                       <div className="button-container">
                         <button
                           type="button"
-                          className="grayed" 
+                          className="grayed"
                           onClick={this.handleCloseModal}
                         >
                         Cancel
@@ -332,7 +352,7 @@ class MenuModal extends Component {
         </div>
       </Fragment>
     );
-  } 
+  }
 }
 
 MenuModal.propTypes = {

@@ -1,6 +1,7 @@
 import React from 'react';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
 import { shallow, mount } from 'enzyme';
 import ReactStars from 'react-stars';
 import OrderHistory, {
@@ -16,12 +17,102 @@ expect
 */
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
+const menuList = [
+  {
+    id: 183,
+    isDeleted: false,
+    date: "Fri, 10 May 2019 00:00:00 GMT",
+    mealPeriod: "lunch",
+    mainMealId: 153,
+    allowedSide: 1,
+    allowedProtein: 1,
+    sideItems: [
+      {
+        id: 67,
+        isDeleted: false,
+        mealType: "side",
+        name: "Afang soup",
+        description: "Afang soup",
+        image: "https://res.cloudinary.com/dunnio1id/image/upload/v1541564567/hqsytk8lcgs9jkz3u0rg.jpg",
+        locationId: 1,
+        timestamps: {
+          created_at: "2018-11-07",
+          updated_at: "Wed, 07 Nov 2018 03:56:28 GMT"
+        }
+      }
+    ],
+    proteinItems: [
+      {
+        id: 157,
+        isDeleted: false,
+        mealType: "protein",
+        name: "Cat fish",
+        description: "Protein",
+        image: "/assets/images/default.png",
+        locationId: 1,
+        timestamps: {
+          created_at: "2019-04-10",
+          updated_at: "Wed, 10 Apr 2019 14:27:19 GMT"
+        }
+      }
+    ],
+    vendorEngagementId: 44,
+    locationId: 1,
+    timestamps: {
+      created_at: "2019-05-08",
+      updated_at: "Wed, 08 May 2019 06:10:26 GMT"
+    },
+    mainMeal: {
+      id: 153,
+      isDeleted: false,
+      mealType: "main",
+      name: "Amala",
+      description: "Swallow",
+      image: "/assets/images/default.png",
+      locationId: 1,
+      timestamps: {
+        created_at: "2019-04-10",
+        updated_at: "Wed, 10 Apr 2019 14:27:19 GMT"
+      }
+    }
+  },
+];
+
+const menu = {
+  isLoading: false,
+  isDeleting: false,
+  isCreating: false,
+  dateOfMeal: null,
+  mealPeriod: "lunch",
+  menuList,
+  vendorEngagements: [],
+  mealItems: [],
+  meta: {
+    total_rows: 4,
+    total_pages: 1,
+    current_page: 1,
+    next_page: null,
+    prev_page: null
+  },
+  error: {
+    status: false,
+    message: null
+  },
+  startDateOfSearch: "Wed, 08 May 2019 00:00:00 GMT",
+  endDateOfSearch: "Mon, 13 May 2019 00:00:00 GMT"
+};
 
 let mountedComponent;
 let props = {
+  menu,
   match: {
     url: '/orders'
   },
+  pastMenus: [{
+    date:
+    "2019-05-08",
+    menus: menuList
+  }],
   orders: {
     isLoading: false,
     meals: [{
@@ -44,6 +135,7 @@ let props = {
   filterOrders: () => Promise.resolve(),
   deleteOrder: () => Promise.resolve(),
   fetchMenus: () => Promise.resolve(),
+  fetchMenu: () => Promise.resolve()
 };
 
 /**
@@ -69,6 +161,7 @@ describe('Component: Orders', () => {
   it('shows loader', () => {
     const wrapper = getComponent();
     wrapper.setProps({
+      menu: {},
       orders: {
         ...props.orders,
         isLoading: true,
@@ -81,6 +174,7 @@ describe('Component: Orders', () => {
     wrapper.setProps({
       orders: {
         ...props.orders,
+        orders: [],
         error: 'Failed to load'
       }
     });
@@ -236,6 +330,15 @@ jest.mock('../../../components/MealCard/Modal', () => () => (
 
 describe('Test suite for rating an order', () => {
   it('Should rate a vendor', () => {
+    const store = mockStore({
+      allRatings: {
+        ratingList: [{
+          overallRating: 4, mainMeal: 'Caribbean pasta', date: '2019-08-05'
+        }]
+        
+      },
+      userReducer: {}
+    });
     const newOrders = {
       isLoading: false,
       error: "",
@@ -263,19 +366,19 @@ describe('Test suite for rating an order', () => {
           mealItems: [
             {
               id: 67,
-              meal_type: "side",
+              mealType: "side",
               name: "Afang soup",
               image: "https://res.cloudinary.com/dunnio1id/image/upload/v1541564567/hqsytk8lcgs9jkz3u0rg.jpg"
             },
             {
               id: 157,
-              meal_type: "protein",
+              mealType: "protein",
               name: "Cat fish",
               image: "/assets/images/default.png"
             },
             {
               id: 153,
-              meal_type: "main",
+              mealType: "main",
               name: "Amala",
               image: "/assets/images/default.png"
             }
@@ -295,94 +398,16 @@ describe('Test suite for rating an order', () => {
       rating: 0
     };
 
-    const menu = {
-      isLoading: false,
-      isDeleting: false,
-      isCreating: false,
-      dateOfMeal: null,
-      mealPeriod: "lunch",
-      menuList: [
-        {
-          id: 183,
-          isDeleted: false,
-          date: "Fri, 10 May 2019 00:00:00 GMT",
-          mealPeriod: "lunch",
-          mainMealId: 153,
-          allowedSide: 1,
-          allowedProtein: 1,
-          sideItems: [
-            {
-              id: 67,
-              isDeleted: false,
-              mealType: "side",
-              name: "Afang soup",
-              description: "Afang soup",
-              image: "https://res.cloudinary.com/dunnio1id/image/upload/v1541564567/hqsytk8lcgs9jkz3u0rg.jpg",
-              locationId: 1,
-              timestamps: {
-                created_at: "2018-11-07",
-                updated_at: "Wed, 07 Nov 2018 03:56:28 GMT"
-              }
-            }
-          ],
-          proteinItems: [
-            {
-              id: 157,
-              isDeleted: false,
-              mealType: "protein",
-              name: "Cat fish",
-              description: "Protein",
-              image: "/assets/images/default.png",
-              locationId: 1,
-              timestamps: {
-                created_at: "2019-04-10",
-                updated_at: "Wed, 10 Apr 2019 14:27:19 GMT"
-              }
-            }
-          ],
-          vendorEngagementId: 44,
-          locationId: 1,
-          timestamps: {
-            created_at: "2019-05-08",
-            updated_at: "Wed, 08 May 2019 06:10:26 GMT"
-          },
-          mainMeal: {
-            id: 153,
-            isDeleted: false,
-            mealType: "main",
-            name: "Amala",
-            description: "Swallow",
-            image: "/assets/images/default.png",
-            locationId: 1,
-            timestamps: {
-              created_at: "2019-04-10",
-              updated_at: "Wed, 10 Apr 2019 14:27:19 GMT"
-            }
-          }
-        },
-      ],
-      vendorEngagements: [],
-      mealItems: [],
-      meta: {
-        total_rows: 4,
-        total_pages: 1,
-        current_page: 1,
-        next_page: null,
-        prev_page: null
-      },
-      error: {
-        status: false,
-        message: null
-      },
-      startDateOfSearch: "Wed, 08 May 2019 00:00:00 GMT",
-      endDateOfSearch: "Mon, 13 May 2019 00:00:00 GMT"
-    };
-
-
     const completeProps = {
-      ...props, orders: newOrders, menu, createRating: jest.fn()
+      ...props, 
+      orders: newOrders, 
+      menu, 
+      createRating: jest.fn(() => Promise.resolve()),
+      store: mockStore
     };
-    const wrapper = mount(<Orders {...completeProps} />);
+    const wrapper = mount(<Provider store={store}><Orders {...completeProps} /></Provider>);
+    wrapper.setProps({ store });
+
     const reactStar = wrapper.find(ReactStars);
     wrapper
       .find('.rate-button').simulate('click', { preventDefault: jest.fn() });

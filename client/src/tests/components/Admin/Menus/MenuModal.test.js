@@ -5,47 +5,47 @@ import MenuModal from '../../../../components/Admin/Menus/MenuModal';
 import { mockMenuItem, menu } from '../../../__mocks__/mockMenuItems';
 import vendorEngagements from '../../../__mocks__/mockEngagements';
 
+const props = {
+  modalButtontext: 'ADD MENU',
+  closeModal: jest.fn(),
+  handleSubmit: jest.fn(),
+  vendorEngagements: [
+    {
+      vendorId: '111',
+      vendor: { name: 'caramel' },
+      startDate: '',
+      endDate: ''
+    }
+  ],
+  mealItems: [
+    {
+      description: "Jollof Rice",
+      id: 1,
+      image: "google.com",
+      isDeleted: false,
+      mealType: "main",
+      name: "Rice"
+    },
+    {
+      description: "Fried Chicken",
+      id: 3,
+      image: "google.com",
+      isDeleted: false,
+      mealType: "protein",
+      name: "Chicken",
+    },
+    {
+      description: "Baked beans",
+      id: 4,
+      image: "google.com",
+      isDeleted: false,
+      mealType: "side",
+      name: "Moi Moi",
+    }
+  ]
+};
 describe('MenuModal Component', () => {
   const setup = () => {
-    const props = {
-      modalButtontext: 'ADD MENU',
-      closeModal: jest.fn(),
-      handleSubmit: jest.fn(),
-      vendorEngagements: [
-        {
-          vendorId: '',
-          vendor: { name: '' },
-          startDate: '',
-          endDate: ''
-        }
-      ],
-      mealItems: [
-        {
-          description: "Jollof Rice",
-          id: 1,
-          image: "google.com",
-          isDeleted: false,
-          mealType: "main",
-          name: "Rice"
-        },
-        {
-          description: "Fried Chicken",
-          id: 3,
-          image: "google.com",
-          isDeleted: false,
-          mealType: "protein",
-          name: "Chicken",
-        },
-        {
-          description: "Baked beans",
-          id: 4,
-          image: "google.com",
-          isDeleted: false,
-          mealType: "side",
-          name: "Moi Moi",
-        }
-      ]
-    };
 
     return mount(<MenuModal {...props} />);
   };
@@ -80,6 +80,38 @@ describe('MenuModal Component', () => {
     const spy = jest.spyOn(wrapper.instance(), 'checkAllowedSelection');
     wrapper.instance().checkAllowedSelection();
     expect(spy).toHaveBeenCalled();
+  });
+
+  it('Should throw error if selected side meal is less that allowedSideMeal', () => {
+    const event = { preventDefault: jest.fn() };
+
+    wrapper.setState({
+      allowedSideMeal: { value: 2 },
+      allowedProtein: { value: 1 },
+      protein: ['Chicken'],
+      sideMeal: ['Moi Moi'],
+      vendorEngagementId: props.vendorEngagements[0].vendorId,
+      mainItem: "Amala",
+    });
+
+    wrapper.instance().formValidation(event);
+    expect(wrapper.instance().state.errors.sideMeal).toEqual('Side meals should not be less than Allowed Side Meal')
+  });
+
+  it('Should throw error if selected protein is less that allowedProten', () => {
+    const event = { preventDefault: jest.fn() };
+
+    wrapper.setState({
+      allowedSideMeal: { value: 1 },
+      allowedProtein: { value: 2 },
+      protein: ['Chicken'],
+      sideMeal: ['Moi Moi'],
+      vendorEngagementId: props.vendorEngagements[0].vendorId,
+      mainItem: "Amala",
+    });
+
+    wrapper.instance().formValidation(event);
+    expect(wrapper.instance().state.errors.protein).toEqual('Proteins not be less than Allowed Protein')
   });
 
   describe('Component methods', () => {

@@ -2,12 +2,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { setMealImage } from '../../../../helpers/mealsHelper';
+import { setMealImage } from '../../../helpers/mealsHelper';
 
 const ImageView = (props) => {
   const { openFileDialog, error, dataurl } = props;
-  if (!dataurl || dataurl
-    === `${process.env.BASE_URL}/assets/images/default.png`) {
+  if (!dataurl || error !== null) {
     return (
       <div className="image">
         <div className="control">

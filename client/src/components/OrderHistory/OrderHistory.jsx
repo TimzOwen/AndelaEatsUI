@@ -4,13 +4,12 @@ import PropTypes from 'prop-types';
 import Pagination from 'rc-pagination/lib';
 import { connect } from 'react-redux';
 import DatePicker from 'react-date-picker';
-import { format, addDays } from "date-fns";
+import { format, addDays, subDays } from "date-fns";
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import moment from 'moment';
+import 'react-toastify/dist/ReactToastify.css';;
 
 import MealCard from '../MealCard/MealCard';
-import Modal from '../MealCard/Modal';
+import  Modal from '../MealCard/Modal';
 import RatingModal from '../common/RatingModal';
 
 import Loader from '../common/Loader/Loader';
@@ -28,6 +27,7 @@ import {
 
 import { validateDate } from '../../helpers/dateFormatter';
 import { fetchMenus } from '../../actions/admin/menuItemsAction';
+import { fetchMenu } from '../../actions/menuAction';
 
 
 /**
@@ -45,7 +45,7 @@ export class Orders extends Component {
     this.state = {
       isOpen: false,
       searchParam: '',
-      start: addDays(new Date, -7),
+      start: subDays(new Date, 7),
       end: addDays(new Date(), 7),
       showModal: false,
       modalContent: null,
@@ -54,8 +54,9 @@ export class Orders extends Component {
       newRating: 0,
       modalTitle: '',
       editOrder: false,
-      startDate: moment(),
-      endDate: moment().add(3, 'days'),
+      startDate: format(subDays(new Date(), 20), 'YYYY-MM-DD'),
+      endDate: format(new Date(), 'YYYY-MM-DD'),
+      isRatingMeal: false
     };
 
 
@@ -75,15 +76,23 @@ export class Orders extends Component {
    * @returns {*} null
    */
   componentDidMount() {
-    const { start, end } = this.state;
-    const startDate = format(start, 'YYYY-MM-DD');
-    const endDate = format(end, 'YYYY-MM-DD');
+    const { start, end , endDate, startDate} = this.state;
+    const OrdersStartDate = format(start, 'YYYY-MM-DD');
+    const OrdersEndDate = format(end, 'YYYY-MM-DD');
 
     const menuStartDate = format(new Date, 'YYYY-MM-DD');
     const menuEndDate = format(addDays(new Date, 5), 'YYYY-MM-DD');
-
-    this.props.fetchOrders(startDate, endDate);
-    this.props.fetchMenus(menuStartDate, menuEndDate);
+    this.props.fetchMenus(menuStartDate, menuEndDate)
+    this.props.fetchOrders(OrdersStartDate, OrdersEndDate)
+    .then(() => {
+      if (this.props.orders.orders.length === 0 ) {
+        this.props.fetchMenu(startDate, endDate).then(() => {
+          this.setState({ 
+            isRatingMeal: true
+          })
+        })
+      }
+    })
   }
 
 
@@ -285,9 +294,10 @@ export class Orders extends Component {
     const { modalContent } = this.state;
     const {menuList} = this.props.menu;
     const engagement = menuList.filter(menu => menu.id == modalContent.menuId);
-    let vendorEngagementId, mainMealId = 0;
-    const serviceDate = format(modalContent.dateBookedFor, 'YYYY-MM-DD')
-    if (engagement[0]){
+    let vendorEngagementId = modalContent.vendorEngagementId || 0;
+    let mainMealId = modalContent.mealItems.filter(meal => meal.mealType === 'main')[0].id
+    const serviceDate = format(modalContent.dateBookedFor, 'YYYY-MM-DD');
+    if (engagement.length > 0){
       vendorEngagementId= engagement[0].vendorEngagementId;
       mainMealId =engagement[0].mainMealId
     }
@@ -301,8 +311,11 @@ export class Orders extends Component {
       mainMealId,
       serviceDate
     };
-
-    this.props.createRating(ratingDetails);
+    this.props.createRating(ratingDetails)
+    .then(() => {
+      this.hideModal();
+      location.reload();
+    });
   }
 
     /**
@@ -326,22 +339,37 @@ export class Orders extends Component {
    * @return { void }
    */
   render() {
-    const { match: { url }, orders, loading} = this.props;
+    const meals = this.props.pastMenus
+      .reduce((accu, curr) => [...accu, ...curr.menus], [])
+      .map((meal) => ({
+        id: 0,
+        mealItems: [...meal.sideItems, ...meal.proteinItems, meal.mainMeal],
+        orderStatus: 'N/A',
+        dateBookedFor: meal.date,
+        user_rating: null,
+        hasRated: false,
+        menuId: meal.id,
+        vendorEngagementId: meal.vendorEngagementId
+      }));
+    const { orders } = this.props;
+    const mealsToRate = orders.orders && orders.orders.length > 0 ? orders.orders : meals
     const {
       isOpen,
       searchParam,
       start,
       end,
       showRatingModal,
-      modalTitle
+      modalTitle,
+      isRatingMeal,
+      modalContent
     } = this.state;
-const load = (orders.isLoading || loading);
+    const loading = (orders.isLoading || this.props.isLoading) && !isRatingMeal;
     return (
       <Fragment>
-        {load && <Loader />}
-        <div className={`order-history ${load && 'blurred'}`}>
+        {loading && <Loader />}
+        <div className={`order-history ${loading && !isRatingMeal && 'blurred'}`}>
           <div className="title">
-            <span>Order History</span>
+            <span>{isRatingMeal && !orders.isFiltered ? 'Past Meals':  'Order History' }</span>
             <ToastContainer />
             {orders.isFiltered && <span>&nbsp;(filtered)</span>}
             <div className="filter">
@@ -350,7 +378,7 @@ const load = (orders.isLoading || loading);
                 type="button"
                 onClick={this.openFilterModal}
               ><i className="fas fa-filter" />   Filter
-              </button>
+              </button> 
               <form
                 className={`dropdown ${isOpen && "active"}`}
               >
@@ -413,31 +441,32 @@ const load = (orders.isLoading || loading);
                 {orders.error.response || "Unable to connect to the internet"}
               </div>)
           }
-          <Modal
+          {!isRatingMeal && <Modal
             displayModal={this.state.showModal}
             closeModal={this.hideModal}
             deleteOrder={this.deleteOrder}
-            modalContent={this.state.modalContent}
+            modalContent={modalContent}
             modalTitle={modalTitle}
             tapOrder={this.tapOrder}
             editOrder={this.editOrder}
             edit={this.state.editOrder}
-          />
+          />}
           <RatingModal
             displayModal={showRatingModal}
             closeModal={this.hideModal}
             modalTitle={this.generateTitle()}
             handleSubmit={this.handleRatingSubmit}
-          />
+            isLoading={orders.isLoading}
+          />   
           {
-            Array.isArray(orders.orders) && orders.orders.length > 0
+           !loading && mealsToRate.length > 0
               ? (
                 <Fragment>
                   <div className="container">
                     {
-                      orders.orders.map((meal) => (
+                      mealsToRate.map((meal, index) => (
                         <MealCard
-                          key={meal.id}
+                          key={index}
                           meal={meal}
                           showModal={this.showModal}
                           showRatingModal={this.showRatingModal}
@@ -462,7 +491,7 @@ const load = (orders.isLoading || loading);
               )
               : (
                 <EmptyContent
-                  message="No meals available at the moment"
+                  message="No orders available at the moment"
                 />
               )
           }
@@ -482,7 +511,9 @@ Orders.propTypes = {
   }),
   filterOrders: PropTypes.func.isRequired,
   fetchOrders: PropTypes.func.isRequired,
-  deleteOrder: PropTypes.func
+  deleteOrder: PropTypes.func,
+  fetchMenu: PropTypes.func.isRequired,
+  pastMenus: PropTypes.array
 };
 
 Orders.defaultProps = {
@@ -498,11 +529,12 @@ Orders.defaultProps = {
 const mapStateToProps = state => ({
   orders: state.orders,
   menu: state.menus,
-  loading: state.upcomingMenus.isLoading
+  pastMenus: state.upcomingMenus.menus,
+  isLoading: state.upcomingMenus.isLoading
 });
 
 const actionCreators = {
-  fetchOrders, filterOrders, deleteOrder, createRating, collectOrder,fetchMenus
+  fetchOrders, filterOrders, deleteOrder, createRating, collectOrder,fetchMenus, fetchMenu
 };
 
 export default connect(mapStateToProps, actionCreators)(Orders);

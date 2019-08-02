@@ -1,8 +1,12 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { ToastContainer } from 'react-toastify';
+import {
+  validateAddMealImage,
+} from '../../../helpers/mealsHelper';
+import { upload } from '../../../helpers/cloudinary';
 import DeleteModal from '../../common/DeleteModal/DeleteModal';
 import Loader from '../../common/Loader/Loader';
 import UserCard from './UserCard';
@@ -20,7 +24,8 @@ import EmptyContent from '../../common/EmptyContent';
 const initialUser = {
   firstName: '',
   lastName: '',
-  roleId: 11
+  roleId: 11,
+  imageUrl: ''
 }
 /**
  * Class representing Users
@@ -28,19 +33,35 @@ const initialUser = {
  */
 export class Users extends Component {
 
-  state = {
-    showDeleteModal: false,
-    showModal: false,
-    errors: null,
-    user: initialUser
+  constructor(props) {
+    super(props);
+    this.state = {
+      showDeleteModal: false,
+      showModal: false,
+      errors: null,
+      user: initialUser, 
+      image: {
+        file: null,
+        dataurl: null,
+        error: null,
+      },
+      imageLoading: false
+    }
+    this.imageInput = createRef()
   }
+
+  /**
+   * method returning imageInput ref
+   */
+  getImageRef = () => this.imageInput;
 
   componentDidMount() {
     this.props.fetchUsers()
     .then(() => this.props.fetchUserRoles())
   }
 
-   /**
+
+  /**
    *
    *
    * @description handle onChage event
@@ -57,66 +78,132 @@ export class Users extends Component {
     user: oldUser,
     errors: {
       ...prevState.errors,
-      [name] : ''
+      [name]: ''
     },
   }));
 };
 
-  /**
-   * 
-   * @method formValidation
-   * 
-   * @memberof Users
-   * 
-   * @param {object} event
-   * 
-   * @returns {void}
-   */
-  formValidation = () => {
-    const errorObject = {
-      firstName: this.state.user.firstName,
-      lastName: this.state.user.lastName
-    };
-    const err = inputValidation(errorObject);
-    if (!err.isEmpty) {
-      this.setState({ errors: err.errors });
-      return true;
-    }
-    return false
-    
-  }
+/**
+  * 
+  * @method formValidation
+  * 
+  * @memberof Users
+  * 
+  * @param {object} event
+  * 
+  * @returns {void}
+  */
+ formValidation = () => {
+   const errorObject = {
+     firstName: this.state.user.firstName,
+     lastName: this.state.user.lastName
+   };
+   const err = inputValidation(errorObject);
+   if (!err.isEmpty) {
+     this.setState({ errors: err.errors });
+     return true;
+   }
+   return false;
+ }
 
-  /**
-   *
-   * @description handle onSubmit event
-   *
-   * @param { Object } event
-   *
-   * @returns { undefined }
-   */
-  onSubmit = event => {
-    event.preventDefault();
-    const { user } = this.state;
-    const userData = {
-      slackId: user.slackId,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      userId: user.userId,
-      roleId: user.roleId,
-      id: user.id
+ /**
+  *
+  * @description handle onSubmit event
+  *
+  * @param { Object } event
+  *
+  * @returns { undefined }
+  */
+ onSubmit = async event => {
+   event.preventDefault();
+   if (this.state.image.dataurl) {
+     this.setState({imageLoading: true})
+      await upload(this.state.image.dataurl).then(payload => {
+      this.setState(prevState => ({
+        user: {
+          ...prevState.user,
+          imageUrl: payload.secure_url
+        },
+        imageLoading: false,
+        image: {
+          file: null,
+          dataurl: null,
+          error: null,
+        },
+      }))
+    }).catch(err => {
+      this.setState({
+        image: {
+          file: null,
+          dataurl: null,
+          error: err.message,
+        },
+       })
     }
-    const error = this.formValidation();
-    if (!error) {
-      const method = !user.id ? this.props.createUser : this.props.updateUser;
-      return method(userData).then(() => {
-        this.showModal(user);
-        this.setState({
-          user: user
-        })
-      });
-    }
-  }
+    );
+   }
 
+   const { user, image } = this.state;
+   const userData = {
+     slackId: user.slackId,
+     firstName: user.firstName,
+     lastName: user.lastName,
+     userId: user.userId,
+     roleId: user.roleId,
+     id: user.id,
+     imageUrl: user.imageUrl
+     ? user.imageUrl
+     : "http://andelaeats-dev.andela.com:3000/assets/images/defaultUser.svg"
+   };
+   const error = this.formValidation();
+   if (!error && !image.error ) {
+     const method = !user.id ? this.props.createUser : this.props.updateUser;
+     return method(userData).then(() => {
+       this.showModal(user);
+       this.setState({
+         user
+       });
+     });
+   }
+ }
+
+ openFileDialog = () => {
+   const { current: element } = this.imageInput;
+   element.click();
+ };
+
+ handleUpload = (e) => {
+   const image = e.target.files[0];
+   const status = validateAddMealImage(image);
+   if (status === true) {
+     const reader = new FileReader();
+     reader.onload = () => {
+       this.setState({
+         image: {
+           file: image,
+           dataurl: reader.result,
+           error: null
+         },
+         imageLoading: false
+       });
+     };
+     reader.readAsDataURL(image);
+     reader.onloadstart = () => {
+       this.setState({
+        imageLoading:true
+       })
+     }
+   } else {
+     this.setState({
+       image: {
+         file: null,
+         dataurl: null,
+         error: status,
+       },
+     });
+   }
+ }
+ 
   deleteUser = (user) => {
     this.props.deleteUser(user).then(() => {
       this.displayDeleteModal(this.state.user)
@@ -140,17 +227,22 @@ export class Users extends Component {
   closeModal = () => {
     this.setState(prevState => ({
       showModal: !prevState.showModal,
-      user: initialUser
+      user: initialUser,
+      image: {
+        file: null,
+        dataurl: null,
+        error: null,
+      },
     }));
   }
 
   render() {
-    const { showDeleteModal, showModal, user, errors } = this.state;
+    const { showDeleteModal, showModal, user, errors, image, imageLoading } = this.state;
     const {loading, roles, users } = this.props;
     return (
       <React.Fragment>
         <ToastContainer />
-        { loading &&  <Loader/> } 
+        { loading || imageLoading &&  <Loader/> } 
           <DeleteModal
           closeModal={this.displayDeleteModal}
           displayDeleteModal={showDeleteModal}
@@ -168,6 +260,11 @@ export class Users extends Component {
             errors={errors}
             loading={loading}
             roles ={roles}
+            handleUpload={this.handleUpload}
+            image = {image}
+            openFileDialog={this.openFileDialog}
+            getImageRef ={this.getImageRef}
+            imageLoading={imageLoading}
           />
         <div className={`${loading && 'blurred'} users-container`}>
         <button disabled={loading} onClick={() => this.showModal(user)} type="submit" className="button-right">

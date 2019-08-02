@@ -11,7 +11,9 @@ import {
   GET_ORDER_SUCCESS,
   DELETE_ORDER_FAILURE,
   CREATE_MENU_RATING_SUCCESS,
-  DELETE_ORDER_LOADING
+  DELETE_ORDER_LOADING,
+  CREATE_MENU_RATING_LOADING,
+  CREATE_MENU_RATING_FAILURE
 } from "../../actions/actionTypes";
 
 /*
@@ -102,6 +104,21 @@ describe('Past Orders Reducer', () => {
       };
       const newState = ordersReducer(orders, action);
       expect(newState.isDeleting).toEqual(action.payload);
+    });
+
+    it('CREATE_MENU_RATING_LOADING :: should change isLoading state', () => {
+      const action = {
+        type: CREATE_MENU_RATING_LOADING,
+      };
+      const newState = ordersReducer(orders, action);
+      expect(newState.isLoading).toEqual(true);
+    });
+    it('CREATE_MENU_RATING_FAILURE :: should change isLoading state', () => {
+      const action = {
+        type: CREATE_MENU_RATING_FAILURE,
+      };
+      const newState = ordersReducer(orders, action);
+      expect(newState.isLoading).toEqual(false);
     });
   });
 

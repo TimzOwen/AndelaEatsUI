@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 import moxios from 'moxios';
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import {
   FETCH_MEAL_ITEMS_LOADING,
   FETCH_MEAL_ITEMS_FAILURE,
@@ -13,6 +15,7 @@ import {
   EDIT_MEAL_ITEM_LOADING,
   EDIT_MEAL_ITEM_SUCCESS,
   EDIT_MEAL_ITEM_FAILURE,
+  MEAL_EXISTS_RESULT,
 } from '../../../actions/actionTypes';
 
 import {
@@ -20,6 +23,8 @@ import {
   deleteMealItem,
   addMealItem,
   editMealItem,
+  checkMealExistence,
+  showMealModal
 } from '../../../actions/admin/mealItemsAction';
 import { mealItems, pagination } from '../../__mocks__/mockMealItems';
 
@@ -262,6 +267,22 @@ describe('Admin::Meal Items Action', () => {
       done();
     });
 
+    it('should show modal', () => {
+      const expectedActions = [
+        {
+          type: SHOW_MEAL_MODAL,
+          payload: {
+            edit: false,
+            show: false,
+          }, 
+        }
+      ];
+
+      const store = mockStore({});
+      store.dispatch(showMealModal(false, false));
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+
     it('throws error on update failure', async (done) => {
       const expectedActions = [
         {
@@ -291,6 +312,163 @@ describe('Admin::Meal Items Action', () => {
         expect(store.getActions()).toEqual(expectedActions);
       });
       done();
+    });
+  });
+  describe('Check whether a meal already exists', () => {
+    beforeEach(() => moxios.install());
+    afterEach(() => moxios.uninstall());
+
+    it('checks whether a meal exists in the system', async () => {
+      const mockStore = configureStore([thunk]);
+      const store = mockStore();
+      const expectedActions = [
+        {
+          type: 'MEAL_EXISTS_RESULT',
+          payload: { loadingMealExistence: true, mealExists: null, mealItems: [] },
+        },
+        {
+          type: 'MEAL_EXISTS_RESULT',
+          payload: { loadingMealExistence: false, mealExists: null, mealItems: [] },
+        },
+      ];
+
+      moxios.stubRequest(`/meal-items?name=G-nuts`, {
+        status: 200,
+        response: {
+          data: {
+            payload: {
+              mealItems: [
+                {
+                  id: 67,
+                  isDeleted: false,
+                  mealType: 'side',
+                  name: 'ground-nuts',
+                  image: 'https://res.cloudinary.com/hqsytk8lcgs9jkz3u0rg.jpg',
+                  locationId: 1,
+                  timestamps: {
+                    created_at: '2018-11-07',
+                    updated_at: 'Wed, 07 Nov 2018 03:56:28 GMT',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      });
+
+      await checkMealExistence('g-nuts')(store.dispatch);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+    it('checks whether a meal exists in the system', async () => {
+      const mockStore = configureStore([thunk]);
+      const store = mockStore();
+      const expectedActions = [
+        {
+          type: 'MEAL_EXISTS_RESULT',
+          payload: { loadingMealExistence: true, mealExists: null, mealItems: [] },
+        },
+        {
+          type: 'MEAL_EXISTS_RESULT',
+          payload: { loadingMealExistence: false, mealExists: null, mealItems: [] },
+        },
+      ];
+
+      moxios.stubRequest(`/meal-items?name=G-nuts`, {
+        status: 200,
+        response: {
+          data: {
+            payload: {
+              mealItems: [
+                {
+                  id: 67,
+                  isDeleted: false,
+                  mealType: 'side',
+                  name: 'ground-nuts',
+                  image: 'https://res.cloudinary.com/hqsytk8lcgs9jkz3u0rg.jpg',
+                  locationId: 1,
+                  timestamps: {
+                    created_at: '2018-11-07',
+                    updated_at: 'Wed, 07 Nov 2018 03:56:28 GMT',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      });
+
+      await checkMealExistence('g-nuts')(store.dispatch);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+
+    it('checks whether a meal exists in the system', async () => {
+      const mockStore = configureStore([thunk]);
+      const store = mockStore();
+      const expectedActions = [
+        {
+          type: 'MEAL_EXISTS_RESULT',
+          payload: { loadingMealExistence: true, mealExists: null, mealItems: [] },
+        },
+        {
+          type: 'MEAL_EXISTS_RESULT',
+          payload: { loadingMealExistence: false, mealExists: null, mealItems: [] },
+        },
+      ];
+
+      moxios.stubRequest(`/meal-items?name=G-nuts`, {
+        status: 200,
+        response: {
+          data: {
+            payload: {
+              mealItems: [
+                {
+                  id: 67,
+                  isDeleted: false,
+                  mealType: 'side',
+                  name: 'ground-nuts',
+                  image: 'https://res.cloudinary.com/hqsytk8lcgs9jkz3u0rg.jpg',
+                  locationId: 1,
+                  timestamps: {
+                    created_at: '2018-11-07',
+                    updated_at: 'Wed, 07 Nov 2018 03:56:28 GMT',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      });
+
+      await checkMealExistence('g-nuts')(store.dispatch);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+
+    it('tests the case when a user types a non existing meal item', async () => {
+      const mockStore = configureStore([thunk]);
+      const store = mockStore();
+      moxios.stubRequest(`/meal-items?name=Xxx`, {
+        response: {
+          msg: "OK",
+          payload: { mealItems: [] }
+        },
+      });
+      const expectedActions = [
+        {
+          type: 'MEAL_EXISTS_RESULT',
+          payload: {
+            loadingMealExistence: true, mealExists: null, mealItems: [] 
+          },
+        },
+        {
+          type: 'MEAL_EXISTS_RESULT',
+          payload: {
+            filteredMeals: [], loadingMealExistence: false, mealExists: false,
+          },
+        },
+      ];
+
+      await checkMealExistence('Xxx')(store.dispatch);
+      expect(store.getActions()).toEqual(expectedActions);
     });
   });
 });

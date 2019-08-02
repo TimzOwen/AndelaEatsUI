@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import EditOrder from '../EditOrder/EditOrder';
+
 const Modal = ({
   displayModal,
   closeModal,
@@ -58,7 +59,7 @@ const Modal = ({
           </div>
         </div>
       )
-      : <EditOrder closeModal={closeModal} meal={modalContent}/>
+      : modalContent && <EditOrder closeModal={closeModal} meal={modalContent}/>
     }
   </div>
 )

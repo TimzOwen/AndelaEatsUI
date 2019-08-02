@@ -76,6 +76,15 @@
           color: $color-white;
         }
       }
+      .button:hover {
+        background: $color-blue;
+        color: $color-white;
+      }
+      .button:last-of-type {
+        margin-left: 1rem;
+        padding: 0.4375rem 1.125rem;
+        width: auto;
+      }
 
       .dropdown{
         display: none;
