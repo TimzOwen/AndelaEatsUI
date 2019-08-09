@@ -139,6 +139,15 @@ class SideNav extends Component {
                       <span>Meal Sessions</span>
                     </li>
                   </Link>
+                  <Link to="/admin/menu-templates">
+                    <li
+                      className={`sub-menu-item ${homeActive(
+                        'admin/menu-templates'
+                      ) && 'active'}`}
+                    >
+                      <span>Menu Template</span>
+                    </li>
+                  </Link>
                 </div>
                 <li
                   className={`side-nav-item vendors ${!this.state

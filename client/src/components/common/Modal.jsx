@@ -33,7 +33,7 @@ const Modal = ({
       </div>
       <form onSubmit={formValidation}>
         <Fragment>
-          {loading && <Loader /> } 
+          {loading && <Loader /> }
           {children}
           <div className="modal-footer">
             <div className="button-container">
@@ -42,12 +42,14 @@ const Modal = ({
                 classes="grayed"
                 onClickHandler={closeModal}
                 btnText="Cancel"
+                name="cancel"
               />
               <Button
                 btnText={modalButtonText}
                 loading={loading}
                 onClickHandler={formValidation}
-              /> 
+                name={modalButtonText}
+              />
             </div>
           </div>
         </Fragment>
