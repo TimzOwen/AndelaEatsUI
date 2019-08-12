@@ -22,15 +22,16 @@ export const fecthOrdersFailure = error => ({
   payload: error,
 });
 
-export const fetchOrders = (currentPage = '', startDate = '', endDate = '') => dispatch => {
+export const fetchOrders = (currentPage = '',
+  startDate = '', endDate = '') => dispatch => {
   dispatch(fecthOrdersLoading(true));
 
   let url;
 
   if (!startDate || !endDate) {
-    url = `/orders/?page=${currentPage}&per_page=15`
+    url = `/orders/?page=${currentPage}&per_page=15`;
   } else {
-    url = `/orders/${startDate}/${endDate}?page=${currentPage}&per_page=15`
+    url = `/orders/${startDate}/${endDate}?page=${currentPage}&per_page=15`;
   }
 
   return axios.get(url)
@@ -40,7 +41,8 @@ export const fetchOrders = (currentPage = '', startDate = '', endDate = '') => d
     })
     .catch((error) => {
       if (error.response.status === 400) {
-        document.cookie = "jwt-token=; expires=Tue, 20 Nov 2018 13:21:57 GMT; Path=/; Domain=.andela.com";
+        document.cookie = `jwt-token=; expires=Tue, 20 Nov 2018 13:21:57 GMT; `
+          + `Path=/; Domain=.andela.com`;
       }
       dispatch(fecthOrdersFailure(error));
       dispatch(fecthOrdersLoading(false));

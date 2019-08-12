@@ -12,7 +12,7 @@ The Andela Eats is the software automation of the current feeding system so as t
  + React: `A JavaScript library for building user interface`
  + Redux: `A predictable state container for JavaScript apps`
  + Node: `An open-source, cross-platform JavaScript run-time environment for executing JavaScript code server-side.`
- + NPM: `A package manager for JavaScript`
+ + Yarn: `A package manager for JavaScript`
 
 ### Getting Started
 Here is how to get a copy of the project up and running on your local machine for development and testing purposes.
@@ -29,7 +29,7 @@ Here is how to get a copy of the project up and running on your local machine fo
 `cd AndelaEatsUI/client`
 
 * To Install dependencies.
-`npm install`
+`yarn install`
 
 * You will require to create an alias for andelaeats-dev.andela.com in your /etc/hosts which you can access by running this command
   ```sudo vim /etc/hosts``` which opens your /etc/hosts for editing using vim.
@@ -40,11 +40,11 @@ Here is how to get a copy of the project up and running on your local machine fo
 
 ### Starting the app
 * To start the app locally run the following commands
-`npm run build` followed by `npm run dev`
+`yarn build && yarn dev`
 
 ## Testing
 * For Component test
-`npm test`
+`yarn test`
 
 ## Contributions
 

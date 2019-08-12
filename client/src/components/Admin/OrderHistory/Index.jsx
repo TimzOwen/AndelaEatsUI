@@ -22,8 +22,8 @@ export class OrderHistory extends Component {
   componentDidMount() {
     const { currentPage } = this.state;
     const { handlePaginationChange, fetchOrders } = this.props;
-    handlePaginationChange(currentPage)
-    fetchOrders(currentPage)
+    handlePaginationChange(currentPage);
+    fetchOrders(currentPage);
   }
 
   redirectToExport = () => {
@@ -38,7 +38,7 @@ export class OrderHistory extends Component {
     
     this.setState({
       currentPage: current
-    })
+    });
    }
    
 

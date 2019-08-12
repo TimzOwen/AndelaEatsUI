@@ -5,6 +5,10 @@ const inputValidation = (formFields) => {
     && key !== 'errors' && key !== 'id') {
       errors[key] = '*required';
     }
+    // eslint-disable-next-line no-useless-escape
+    if (key === 'tel' && /[^0-9\+]/.test(value)) {
+      errors[key] = 'Phone number should contain numbers only';
+    }
   });
 
   return {

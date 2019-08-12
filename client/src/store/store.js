@@ -10,6 +10,7 @@ const initialState = {};
 const middlewares = process.env.NODE_ENV === 'production'
   ? [tokenValidator, thunk]
   : [tokenValidator, thunk, reduxImmutableStateInvariant()];
+
 /**
  * @export
  * @param {any} {}

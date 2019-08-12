@@ -38,7 +38,7 @@ export class Vendors extends Component {
 
   constructor(props) {
     super(props);
-    this.state = Vendors.initialState();
+    this.state = { ...Vendors.initialState() };
     this.onChange.bind(this);
   }
   
@@ -143,7 +143,9 @@ export class Vendors extends Component {
     event.preventDefault();
     const err = inputValidation(this.state);
     if (err.isEmpty) {
-      this.handleSubmit();
+      if (/\+234/.test(this.state.tel)) {
+        this.setState({ tel: `0${this.state.tel.substring(4)}` }, () => this.handleSubmit());
+      };
     } else {
       this.setState({ errors: err.errors });
     }
@@ -228,6 +230,9 @@ export class Vendors extends Component {
     );
   };
 
+  checkErrorState = (formField) => (
+    (this.state.errors && this.state.errors[formField]) ? this.state.errors[formField] : ""
+  );
   renderVendorInputs = () => (
     <div>
       
@@ -237,31 +242,31 @@ export class Vendors extends Component {
         name='name'
         onChangeHandler={this.onChange}
         label='Name'
-        onFocus={this.clearErrors}
-        error={this.state.errors.name ? this.state.errors.name : ""}
+        clearErrors={this.clearErrors}
+        error={this.checkErrorState('name')}
         />
       <Input 
         id='address'
         onChangeHandler={this.onChange}
         label='Address'
-        error={this.state.errors.address ? this.state.errors.address : ""}
-        onFocus={this.clearErrors}
+        error={this.checkErrorState('address')}
+        clearErrors={this.clearErrors}
         value={this.state.address}
         name='address'
         />
       <Input 
-        error={this.state.errors.tel ? this.state.errors.tel : ""}
+        error={this.checkErrorState('tel')}
         name='tel'
         id='tel'
         value={this.state.tel}
         label='Phone'
         onChangeHandler={this.onChange}
-        onFocus={this.clearErrors}
+        clearErrors={this.clearErrors}
         />
       <Input 
-        onFocus={this.clearErrors}  
+        clearErrors={this.clearErrors}  
         id='contactPerson'
-        error={this.state.errors.contactPerson ? this.state.errors.contactPerson : ""}
+        error={this.checkErrorState('contactPerson')}
         label='Contact Person'
         onChangeHandler={this.onChange}
         name='contactPerson'
@@ -340,7 +345,7 @@ export class Vendors extends Component {
   }
 }
 
-const mapStateToProps = ({ allVendors }) => ({
+export const mapStateToProps = ({ allVendors }) => ({
   isLoading: allVendors.isLoading,
   isCreating: allVendors.isCreating,
   isSuspending: allVendors.isSuspending,
